@@ -1,7 +1,7 @@
 # Power Outage in Texas from Extreme Weather in 2021
 
 <p align="center">
-  <img src="image/texas.jpeg" alt="Map making" width="600">
+  <img src="image/texas.jpeg" alt="texas" width="600">
 </p>
 
 ## Purpose of repository
