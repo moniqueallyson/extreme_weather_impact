@@ -1,2 +1,13 @@
-# extreme_weather_impact
-EDS 223: Homework 4 Identifying the impacts of extreme weather
+# Power Outage in Texas from Extreme Weather in 2021
+
+<p align="center">
+  <img src="image/texas.jpeg" alt="Map making" width="600">
+</p>
+
+## Purpose of repository
+
+## Background
+
+## Data information and organization
+
+## References
