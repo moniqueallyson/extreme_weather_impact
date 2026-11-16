@@ -1,0 +1,38 @@
+---
+title: "Extreme Weather Impact"
+subtitle: "EDS 223: Assignment 4"
+author: "Monique Hernandez"
+date: 11-21-2026
+execute:
+  eval: true
+  warning: false
+  message: false
+format: pdf
+---
+
+# Identifying the impacts of extreme weather
+
+## Backgrgound
+
+Texas - Feb 2021
+Blackouts...
+
+
+### Data Merging
+
+```{r}
+# Load libraries
+library(tidyverse)
+library(sf)
+library(here)
+library(terra)
+library(stars)
+library(tmap)
+library(kableExtra)
+```
+
+### Create blackout mask
+
+### Exclude highways from the cropped blackout mask
+
+### Identify the number of homes likely impacted by blackouts
