@@ -45,17 +45,6 @@ viirs_feb_16b <- rast(here("data", "VNP46A1", "VNP46A1.A2021047.h08v06.001.20210
 ```
 
 ```{r}
-# test if roads and buildings CRS matches 
-if(st_crs(roads) == st_crs(buildings)) {
-  print("coordinate reference systems match")}
-
-# test one of the viirs CRS
-if(st_crs(roads) == st_crs(viirs_feb_7a)) {
-  print("coordinate reference systems match")}
-
-```
-
-```{r}
 # Load roads data using st_read and the query insert given as tip
 roads <- st_read(here("data", "gis_osm_roads_free_1.gpkg"), , 
                  query = "SELECT * FROM gis_osm_roads_free_1 WHERE fclass='motorway'")
@@ -70,24 +59,58 @@ OR type in ('residential', 'apartments', 'house', 'static_caravan', 'detached')"
 ```
 
 ```{r}
+# test if roads and buildings CRS matches 
+if(st_crs(roads) == st_crs(buildings)) {
+  print("coordinate reference systems match")}
+```
+
+```{r}
 # mergen the data to respective date
 viirs_feb_7 <- merge(viirs_feb_7a, viirs_feb_7b) 
-
 viirs_feb_16 <- merge(viirs_feb_16a, viirs_feb_16b)
+```
 
+```{r}
+# test viirs CRS
+if(st_crs(viirs_feb_7 ) == st_crs(viirs_feb_16)) {
+  print("coordinate reference systems match")}
 ```
 
 ### Create blackout mask
 
 ```{r}
-# Create raster object
-
-
+# Find the change in night lights intensity
+change <- viirs_feb_7 - viirs_feb_16
+```
+```{r}
+# Bounding box information given for Houston
+houston <- st_bbox(
+  c(xmin = -96.5, ymin = 29.0, xmax = -94.5, ymax = 30.5),
+  crs = st_crs(change))
 ```
 
+```{r}
+# Crop to match the extent of Houston
+change_crop <- crop(change, houston)
+```
+```{r}
+# Reclassify change
+rcl_change <-  matrix(c(
+    -Inf, 200, NA,
+    200, Inf, 1), nco = 3, byrow = TRUE)
+
+mask_change <- classify(change, rcl = rcl_change)
+```
+```{r}
+# Vectorize blackout mask
+black_out <- st_as_sf(mask_change) 
+
+
+# st_make_valid()
+```
 
 ```{r}
-
+# Reproject to 3083 
 
 ```
 
