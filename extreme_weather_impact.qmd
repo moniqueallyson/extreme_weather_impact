@@ -14,12 +14,10 @@ format: pdf
 
 The output for this assignment should include:
 
-- a set of maps comparing night light intensities before and after the first two storms
-- a map of the homes in Houston that lost power
-- an estimate of the number of homes in Houston that lost power
-- a brief reflection (approx. 100 words) summarizing your results and discussing any limitations to this study
-
-Hint: To determine the number of homes that lost power, you link (spatially join) these areas with OpenStreetMap data on buildings and roads.
+- Comparision map of night light intensities before and after the storm
+- A map of the homes in Houston that lost power
+- Find the estimate number of homes in Houston that lost power
+- Write a brief reflection (approx. 100 words) summarizing your results and discussing any limitations to this study
 
 ## Backgrgound
 
@@ -160,9 +158,6 @@ black_out_houston <- st_crop(black_out, houston)
 blackout <- st_transform(black_out_houston, crs = 3083)
 ```
 
-```{r}
-plot(blackout)
-```
 
 ### Exclude highways from the cropped blackout mask
 
@@ -208,8 +203,30 @@ blackout_difference_roads <- st_difference(blackout, roads_buffer)
 
 ### Identify the number of homes likely impacted by blackouts
 
-To determine the number of homes that lost power, you link (spatially join) these areas with OpenStreetMap data on buildings and roads.
+```{r}
+building <- st_transform(buildings, crs = 3083)
+```
 
 ```{r}
-
+blackout_buildings <- building |> 
+    st_filter(blackout_difference_roads)
 ```
+
+```{r}
+# Find the number of houses blackout
+n_houses <- nrow(blackout_buildings)
+```
+
+```{r}
+tm_basemap("OpenStreetMap") +
+    tm_shape(blackout_difference_roads) +
+    tm_polygons(fill ="red", col="pink") +
+    tm_shape(blackout_buildings) +
+    tm_polygons(fill="red", col="green", )
+```
+
+### Reflection 
+
+The number of homes that were impacted was found to be 157,408.
+The limitation to this study is... geospatial or environmental justice... moniters that search for the city location... 
+As the maps show ... there was a big difference...
