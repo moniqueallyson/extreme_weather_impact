@@ -23,16 +23,62 @@ Blackouts...
 ```{r}
 # Load libraries
 library(tidyverse)
-library(sf)
+library(sf) # Simple features for spatial vector
 library(here)
 library(terra)
-library(stars)
+library(stars) # Raster
 library(tmap)
 library(kableExtra)
 ```
 
+### Load data
+
+```{r}
+# Load night lights data from VIIRS 
+viirs_feb_7a <- rast(here("data", "VNP46A1", "VNP46A1.A2021038.h08v05.001.2021039064328.tif"))
+
+viirs_feb_7b <- rast(here("data", "VNP46A1", "VNP46A1.A2021038.h08v06.001.2021039064329.tif"))
+
+viirs_feb_16a <- rast(here("data", "VNP46A1", "VNP46A1.A2021047.h08v05.001.2021048091106.tif"))
+
+viirs_feb_16b <- rast(here("data", "VNP46A1", "VNP46A1.A2021047.h08v06.001.2021048091105.tif"))
+```
+
+```{r}
+# Load roads data
+roads <- read_sf(here("data","gis_osm_roads_free_1.gpkg"))
+
+# load buildings
+buildings <- read_sf(here("data","gis_osm_buildings_a_free_1.gpkg"))
+```
+
+```{r}
+# merge
+
+s
+```
+
 ### Create blackout mask
+
+
+
+
+```{r}
+
+
+```
+
 
 ### Exclude highways from the cropped blackout mask
 
+```{r}
+
+```
+
 ### Identify the number of homes likely impacted by blackouts
+
+To determine the number of homes that lost power, you link (spatially join) these areas with OpenStreetMap data on buildings and roads.
+
+```{r}
+
+```
