@@ -21,6 +21,10 @@ The output for this assignment should include:
 
 ## Backgrgound
 
+In February 2021, there was a devastating power outage that affected the state of Texas. As it may not be known, Texas is independently on its own in terms of energy, so once a power outage occurs, it is almost impossible to secure energy from neighbooring states which is unique to their governing infrastructures. 
+
+
+
 Texas - Feb 2021
 Blackouts...
 
@@ -49,7 +53,7 @@ viirs_feb_16a <- rast(here("data", "VNP46A1", "VNP46A1.A2021047.h08v05.001.20210
 viirs_feb_16b <- rast(here("data", "VNP46A1", "VNP46A1.A2021047.h08v06.001.2021048091105.tif"))
 ```
 
-```{r}
+```{r, results = 'hide'}
 # Load roads data using st_read and the query insert given as tip
 roads <- st_read(here("data", "gis_osm_roads_free_1.gpkg"), , 
                  query = "SELECT * FROM gis_osm_roads_free_1 WHERE fclass='motorway'")
