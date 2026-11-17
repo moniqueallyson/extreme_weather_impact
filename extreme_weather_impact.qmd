@@ -12,13 +12,22 @@ format: pdf
 
 # Identifying the impacts of extreme weather
 
+The output for this assignment should include:
+
+- a set of maps comparing night light intensities before and after the first two storms
+- a map of the homes in Houston that lost power
+- an estimate of the number of homes in Houston that lost power
+- a brief reflection (approx. 100 words) summarizing your results and discussing any limitations to this study
+
+Hint: To determine the number of homes that lost power, you link (spatially join) these areas with OpenStreetMap data on buildings and roads.
+
 ## Backgrgound
 
 Texas - Feb 2021
 Blackouts...
 
 
-### Data Merging
+### Load and prep data
 
 ```{r}
 # Load libraries
@@ -30,8 +39,6 @@ library(stars) # Raster
 library(tmap)
 library(kableExtra)
 ```
-
-### Load data
 
 ```{r}
 # Load night lights data from VIIRS 
@@ -59,6 +66,13 @@ OR type in ('residential', 'apartments', 'house', 'static_caravan', 'detached')"
 ```
 
 ```{r}
+# Bounding box information given for Houston
+houston <- st_bbox(
+  c(xmin = -96.5, ymin = 29.0, xmax = -94.5, ymax = 30.5),
+  crs = st_crs(4326))
+```
+
+```{r}
 # test if roads and buildings CRS matches 
 if(st_crs(roads) == st_crs(buildings)) {
   print("coordinate reference systems match")}
@@ -76,23 +90,50 @@ if(st_crs(viirs_feb_7 ) == st_crs(viirs_feb_16)) {
   print("coordinate reference systems match")}
 ```
 
+### Before and After
+
+```{r}
+before <- crop(viirs_feb_7, houston)
+```
+```{r}
+after <- crop(viirs_feb_16, houston)
+```
+
+```{r}
+# Masking values below zero and capping at 500 (perhaps higher this)
+mask_before <- before
+mask_before[(mask_before>800 | (mask_before <=0))] <- NA
+
+mask_after <- after
+mask_after[(mask_after>800 | (mask_after <=0))] <- NA
+```
+
+```{r}
+# Combine the two for mapping comparisions
+before_after <- c(mask_before, mask_after)
+```
+
+```{r}
+# Rename layers
+
+names(before_after) <- c("February 7, 2021", "February 16, 2021")
+```
+
+
+```{r}
+# Map before storm
+tm_shape(before_after) +
+    tm_raster(col.legend = tm_legend(title = "light intensity")) +
+    tm_title("Night light intensity before and after Hosuton storm (FEb. 2021)")
+```
+
 ### Create blackout mask
 
 ```{r}
 # Find the change in night lights intensity
 change <- viirs_feb_7 - viirs_feb_16
 ```
-```{r}
-# Bounding box information given for Houston
-houston <- st_bbox(
-  c(xmin = -96.5, ymin = 29.0, xmax = -94.5, ymax = 30.5),
-  crs = st_crs(change))
-```
 
-```{r}
-# Crop to match the extent of Houston
-change_crop <- crop(change, houston)
-```
 ```{r}
 # Reclassify change
 rcl_change <-  matrix(c(
@@ -101,25 +142,69 @@ rcl_change <-  matrix(c(
 
 mask_change <- classify(change, rcl = rcl_change)
 ```
+
 ```{r}
 # Vectorize blackout mask
-black_out <- st_as_sf(mask_change) 
+black_out <- as.polygons(mask_change) |> 
+    st_as_sf() |> 
+    st_make_valid()
+```
 
-
-# st_make_valid()
+```{r}
+# Crop to match the extent of Houston
+black_out_houston <- st_crop(black_out, houston)
 ```
 
 ```{r}
 # Reproject to 3083 
-
+blackout <- st_transform(black_out_houston, crs = 3083)
 ```
 
+```{r}
+plot(blackout)
+```
 
 ### Exclude highways from the cropped blackout mask
 
 ```{r}
+# test if roads CRS if not then matche blackout
+if(st_crs(roads) == st_crs(blackout)) {
+  print("coordinate reference systems match")
+  } else{
+  new_roads <- st_transform(roads, crs = st_crs(blackout))
+}
+```
+
+```{r}
+# test if houston CRS if not then matche blackout
+if(st_crs(houston) == st_crs(blackout)) {
+  print("coordinate reference systems match")
+  } else{
+  new_houston <- st_transform(houston, crs = st_crs(blackout))
+}
+```
+
+```{r}
+# Crop to Houston
+# # received: Warning message: attribute variables are assumed to be spatially constant throughout all geometries
+# road_houston <- st_crop(new_roads, new_houston)
+```
+
+```{r}
+# union
+roads_union <- st_union(new_roads)
 
 ```
+
+```{r}
+# Create buffer zone
+roads_buffer <- st_buffer(roads_union, dist = 200)
+```
+
+```{r}
+blackout_difference_roads <- st_difference(blackout, roads_buffer)
+```
+
 
 ### Identify the number of homes likely impacted by blackouts
 
