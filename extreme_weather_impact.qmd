@@ -45,22 +45,45 @@ viirs_feb_16b <- rast(here("data", "VNP46A1", "VNP46A1.A2021047.h08v06.001.20210
 ```
 
 ```{r}
-# Load roads data
-roads <- read_sf(here("data","gis_osm_roads_free_1.gpkg"))
+# test if roads and buildings CRS matches 
+if(st_crs(roads) == st_crs(buildings)) {
+  print("coordinate reference systems match")}
 
-# load buildings
-buildings <- read_sf(here("data","gis_osm_buildings_a_free_1.gpkg"))
+# test one of the viirs CRS
+if(st_crs(roads) == st_crs(viirs_feb_7a)) {
+  print("coordinate reference systems match")}
+
 ```
 
 ```{r}
-# merge
+# Load roads data using st_read and the query insert given as tip
+roads <- st_read(here("data", "gis_osm_roads_free_1.gpkg"), , 
+                 query = "SELECT * FROM gis_osm_roads_free_1 WHERE fclass='motorway'")
 
-s
+
+# load buildings using st_read and the query insert given as tip
+buildings <- st_read(here("data", "gis_osm_buildings_a_free_1.gpkg"), query = "SELECT *
+FROM gis_osm_buildings_a_free_1
+WHERE (type IS NULL AND name IS NULL)
+OR type in ('residential', 'apartments', 'house', 'static_caravan', 'detached')")
+
+```
+
+```{r}
+# mergen the data to respective date
+viirs_feb_7 <- merge(viirs_feb_7a, viirs_feb_7b) 
+
+viirs_feb_16 <- merge(viirs_feb_16a, viirs_feb_16b)
+
 ```
 
 ### Create blackout mask
 
+```{r}
+# Create raster object
 
+
+```
 
 
 ```{r}
