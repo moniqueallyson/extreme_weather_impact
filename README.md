@@ -47,4 +47,6 @@ Monique A. Hernandez
 
 ## References
 
+NASA LAADS DAAC. (n.d.). *VNP46A1* [Satellite data]. Retrieved November 16, 2026, [retrieved here](https://ladsweb.modaps.eosdis.nasa.gov/search/)
+
 Geofabrik. (n.d.). US South [OpenStreetMap data extract]. Retrieved November 16, 2026, [retrieved here](https://download.geofabrik.de/north-america/us-south.html)
