@@ -247,7 +247,6 @@ tm_basemap("OpenStreetMap") +
     tm_shape(blackout_difference_roads) + # houses
     tm_shape(blackout_buildings) +
     tm_polygons() +
-    tm_fill(fill = outage, fill_alpha = 0.5) +
     tm_scalebar() +
     tm_compass(type = "rose", position = c("left", "top"), size = 1.5) +
     tm_title("Estimed houses impacted by power outage") +
