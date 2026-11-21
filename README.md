@@ -6,19 +6,19 @@
 
 ## Purpose of repository
 
-
 This repository contains the materials for the [fourth homework assignment](https://eds-223-geospatial.github.io/assignments/HW4.html) for EDS 223: Geospatial Analysis and Remote Sensing, a course that is part of the [Master of Environmental Data Science program](https://bren.ucsb.edu/masters-programs/master-environmental-data-science) completed at the Bren School of Environmental Science and Management.
 
 ## Background
 
-
-
+In February 2021, there was a devastating power outage that affected the state of Texas due to several storms that plunged the state into freezing temperatures. Texas runs on independent energy, so once a power outage occurs, it is almost impossible to secure energy from neighboring states which is unique to their governing infrastructures. From the storms, hundreds of deaths occurred.
 
 ## Data information and organization
 
-For this assignment, we will use NASA's Worldview to explore the data surrounding the event date for the storm in Houston. The two dates that were chosen were Febraury 7 and February 16, 2021 due to clearer images to help visualize the extent of the power outage.
+For this assignment, we will use NASA's Worldview to explore the data surrounding the event date for the storm in Houston. The two dates that were chosen were February 7 and February 16, 2021 due to clearer images to help visualize the extent of the power outage.
 
-Also, utilizing road data will help minimize any false imagery that may be incorporated as nights with less traffic since roads give off a fair amount of light on its own.
+
+Also, utilizing road data will help minimize any false imagery that may be incorporated as nights with less traffic since roads give off a fair amount of light on their own.
+
 ```
 extreme_weather_impact
 .
@@ -36,9 +36,15 @@ extreme_weather_impact
 └── README.md
 ```
 
-The `data` folder houses all the main data to reproduce this analysis. The data for the Visible Infrared Imaging Radiometer Suite (VIIRS) was prepped and given by the instructed in a file called `VNP46A1`. This file houses all four of the necessary files, which correspond to two dates (before and after the storm) and the two borders of tiles, h08v05 and h08v06, for Houston. The VIIRS data is distributed through NASA's [Level-1 and Atmospheric Archive & Distribution System](https://ladsweb.modaps.eosdis.nasa.gov/).
 
-The remaining two datasets are for the roads `is_osm_roads_free_1.gpkg` and buidlings `gis_osm_buildings_a_free_1.gpkg` in Houston. Both of these come from [Geofabrik's downloades sites](https://download.geofabrik.de/), which was redistributed from [OpenStreetMap (OSM)](https://planet.openstreetmap.org/).
+The `data` folder houses all the main data to reproduce this analysis. The data for the Visible Infrared Imaging Radiometer Suite (VIIRS) was prepped and given by the instructor in a file called `VNP46A1`. This file houses all four of the necessary files, which correspond to two dates (before and after the storm) and the two borders of tiles, h08v05 and h08v06, for Houston. The VIIRS data is distributed through NASA's [Level-1 and Atmospheric Archive & Distribution System](https://ladsweb.modaps.eosdis.nasa.gov/).
 
+The remaining two datasets are for the roads `is_osm_roads_free_1.gpkg` and buildings `gis_osm_buildings_a_free_1.gpkg` in Houston. Both of these come from [Geofabrik's downloaded sites](https://download.geofabrik.de/), which was redistributed from [OpenStreetMap (OSM)](https://planet.openstreetmap.org/).
+
+## Author
+
+Monique A. Hernandez
 
 ## References
+
+Geofabrik. (n.d.). US South [OpenStreetMap data extract]. Retrieved November 16, 2026, [retrieved here](https://download.geofabrik.de/north-america/us-south.html)
