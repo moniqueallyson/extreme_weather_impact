@@ -21,12 +21,7 @@ The output for this assignment should include:
 
 ## Backgrgound
 
-In February 2021, there was a devastating power outage that affected the state of Texas. As it may not be known, Texas is independently on its own in terms of energy, so once a power outage occurs, it is almost impossible to secure energy from neighbooring states which is unique to their governing infrastructures. 
-
-
-
-Texas - Feb 2021
-Blackouts...
+In February 2021, there was a devastating power outage that affected the state of Texas due to several storms that plunged the state into freezing temperatures. Texas runs on independent energy, so once a power outage occurs, it is almost impossible to secure energy from neighboring states which is unique to their governing infrastructures. From the storms, hundreds of deaths occurred.
 
 
 ### Load and prep data
@@ -44,26 +39,33 @@ library(kableExtra)
 
 ```{r}
 # Load night lights data from VIIRS 
-viirs_feb_7a <- rast(here("data", "VNP46A1", "VNP46A1.A2021038.h08v05.001.2021039064328.tif"))
+viirs_feb_7a <- rast(here(
+  "data", "VNP46A1", "VNP46A1.A2021038.h08v05.001.2021039064328.tif"))
 
-viirs_feb_7b <- rast(here("data", "VNP46A1", "VNP46A1.A2021038.h08v06.001.2021039064329.tif"))
+viirs_feb_7b <- rast(here(
+  "data", "VNP46A1", "VNP46A1.A2021038.h08v06.001.2021039064329.tif"))
 
-viirs_feb_16a <- rast(here("data", "VNP46A1", "VNP46A1.A2021047.h08v05.001.2021048091106.tif"))
+viirs_feb_16a <- rast(here(
+  "data", "VNP46A1", "VNP46A1.A2021047.h08v05.001.2021048091106.tif"))
 
-viirs_feb_16b <- rast(here("data", "VNP46A1", "VNP46A1.A2021047.h08v06.001.2021048091105.tif"))
+viirs_feb_16b <- rast(here(
+  "data", "VNP46A1", "VNP46A1.A2021047.h08v06.001.2021048091105.tif"))
 ```
 
 ```{r, results = 'hide'}
 # Load roads data using st_read and the query insert given as tip
-roads <- st_read(here("data", "gis_osm_roads_free_1.gpkg"), , 
-                 query = "SELECT * FROM gis_osm_roads_free_1 WHERE fclass='motorway'")
+roads <- st_read(here(
+  "data", "gis_osm_roads_free_1.gpkg"), 
+  query = "SELECT * FROM gis_osm_roads_free_1 WHERE fclass='motorway'")
 
 
 # load buildings using st_read and the query insert given as tip
-buildings <- st_read(here("data", "gis_osm_buildings_a_free_1.gpkg"), query = "SELECT *
-FROM gis_osm_buildings_a_free_1
-WHERE (type IS NULL AND name IS NULL)
-OR type in ('residential', 'apartments', 'house', 'static_caravan', 'detached')")
+buildings <- st_read(here(
+  "data", "gis_osm_buildings_a_free_1.gpkg"),
+   query = "SELECT *
+    FROM gis_osm_buildings_a_free_1
+    WHERE (type IS NULL AND name IS NULL)
+    OR type in ('residential', 'apartments', 'house', 'static_caravan', 'detached')")
 
 ```
 
@@ -102,12 +104,12 @@ after <- crop(viirs_feb_16, houston)
 ```
 
 ```{r}
-# Masking values below zero and capping at 500 (perhaps higher this)
+# Masking values below zero and capping at 800 (perhaps higher this)
 mask_before <- before
-mask_before[(mask_before>800 | (mask_before <=0))] <- NA
+mask_before[(mask_before>1000 | (mask_before <=0))] <- NA
 
 mask_after <- after
-mask_after[(mask_after>800 | (mask_after <=0))] <- NA
+mask_after[(mask_after>1000 | (mask_after <=0))] <- NA
 ```
 
 ```{r}
@@ -125,8 +127,21 @@ names(before_after) <- c("February 7, 2021", "February 16, 2021")
 ```{r}
 # Map before storm
 tm_shape(before_after) +
-    tm_raster(col.legend = tm_legend(title = "light intensity")) +
-    tm_title("Night light intensity before and after Hosuton storm (FEb. 2021)")
+    tm_raster(
+    col.scale = tm_scale_continuous(values = 'magma'),
+    col.legend = tm_legend(title = "Light Intensity nW (cm^2 sr^1)")
+    ) +
+    tm_title("Houston night lights before and after storm (February 2021)") +
+    tm_facets(ncol = 2,
+    free.scales = FALSE) +
+    tm_graticules(lwd = 0.4,
+    col = "whitesmoke",
+    alpha = 0.5,
+    n.x= 5,
+    n.y = 5)
+    
+
+col.legend = tm_legend(title = "Light Intensity nW (cm^2 sr^1)", size = 1.2)
 ```
 
 ### Create blackout mask
@@ -184,15 +199,8 @@ if(st_crs(houston) == st_crs(blackout)) {
 ```
 
 ```{r}
-# Crop to Houston
-# # received: Warning message: attribute variables are assumed to be spatially constant throughout all geometries
-# road_houston <- st_crop(new_roads, new_houston)
-```
-
-```{r}
 # union
 roads_union <- st_union(new_roads)
-
 ```
 
 ```{r}
@@ -201,6 +209,7 @@ roads_buffer <- st_buffer(roads_union, dist = 200)
 ```
 
 ```{r}
+# 
 blackout_difference_roads <- st_difference(blackout, roads_buffer)
 ```
 
@@ -208,10 +217,12 @@ blackout_difference_roads <- st_difference(blackout, roads_buffer)
 ### Identify the number of homes likely impacted by blackouts
 
 ```{r}
+# 
 building <- st_transform(buildings, crs = 3083)
 ```
 
 ```{r}
+# 
 blackout_buildings <- building |> 
     st_filter(blackout_difference_roads)
 ```
@@ -222,15 +233,32 @@ n_houses <- nrow(blackout_buildings)
 ```
 
 ```{r}
+# Table for number of houses
+n_houses |> 
+  kable(caption = "Houses impacted by Texas power outage (Feb. 2021)" ,
+  col.names = c("# Impacted Houses")) |>
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+```{r}
+# Map houses that were affected by blackout
+
 tm_basemap("OpenStreetMap") +
-    tm_shape(blackout_difference_roads) +
-    tm_polygons(fill ="red", col="pink") +
+    tm_shape(blackout_difference_roads) + # houses
     tm_shape(blackout_buildings) +
-    tm_polygons(fill="red", col="green", )
+    tm_polygons() +
+    tm_fill(fill = outage, fill_alpha = 0.5) +
+    tm_scalebar() +
+    tm_compass(type = "rose", position = c("left", "top"), size = 1.5) +
+    tm_title("Estimed houses impacted by power outage") +
+    tm_add_legend(
+      type = "polygons",
+      labels = "Power Outage",
+      fill = "darkgrey"
+    )
+    
 ```
 
 ### Reflection 
 
-The number of homes that were impacted was found to be 157,408.
-The limitation to this study is... geospatial or environmental justice... moniters that search for the city location... 
-As the maps show ... there was a big difference...
+The number of homes that were impacted was found to be 157,408 in Houston during the power outage in February 2021 that was caused by extreme storm conditions. One limitation to this particular study is not knowing the exact extent to who was impacted and potentially being excluded. This is important for developing recovery plans surrounding those heavily affected and may have lost income from loss of work or even experiencing personal loss. During the data manipulation, we created a buffer to exclude roads, but this may also exclude homes if they overlapped, which may have occurred during `st_difference`. Overall, more exploration on this matter must be conducted to give a fair and adequate research to provide an equitable solution for future scenarios in case of severe winter storms.
