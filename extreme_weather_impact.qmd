@@ -125,6 +125,8 @@ names(before_after) <- c("February 7, 2021", "February 16, 2021")
 
 
 ```{r}
+#| fig-width: 10
+#| fig-height: 5
 # Map before storm
 tm_shape(before_after) +
     tm_raster(
